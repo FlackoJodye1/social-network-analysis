@@ -1,4 +1,5 @@
 # User-Data
+from datetime import datetime
 
 # Create a dataset of Users containing all relevant attributes to assess assortative mixing
 import pandas as pd
@@ -25,7 +26,8 @@ postings_second = pd.read_csv(INPUT_DIR / filename_postings_second, sep=';')
 # Relationships
 relationships = relationships.drop(columns=['ID_CommunityConnectionType'])
 
-unique_user_ids_following = pd.unique(relationships[['ID_CommunityIdentity', 'ID_CommunityIdentityConnectedTo']].values.ravel('K'))
+unique_user_ids_following = pd.unique(
+    relationships[['ID_CommunityIdentity', 'ID_CommunityIdentityConnectedTo']].values.ravel('K'))
 
 # Votes
 votes = pd.concat([votes_first, votes_second])
@@ -34,7 +36,9 @@ unique_user_ids_votes = pd.unique(votes["ID_CommunityIdentity"])
 
 # Postings
 postings = pd.concat([postings_first, postings_second])
-postings = postings.drop(columns=["ID_Posting", "ID_Article", "PostingHeadline", "PostingComment", "PostingCreatedAt", "ArticlePublishingDate", "ArticleRessortName", "ArticleTitle", "ArticleChannel", "UserCommunityName", "ID_Posting_Parent"])
+postings = postings.drop(columns=["ID_Posting", "ID_Article", "PostingHeadline", "PostingComment", "PostingCreatedAt",
+                                  "ArticlePublishingDate", "ArticleRessortName", "ArticleTitle", "ArticleChannel",
+                                  "UserCommunityName", "ID_Posting_Parent"])
 unique_user_ids_postings = pd.unique(postings["ID_CommunityIdentity"])
 
 # Combine
@@ -42,10 +46,13 @@ votes_and_postings = pd.concat([votes, postings])
 votes_and_postings = votes_and_postings.drop_duplicates(subset="ID_CommunityIdentity")
 votes_and_postings = votes_and_postings.reset_index(drop=True)
 
-users = pd.merge(pd.DataFrame(unique_user_ids_following, columns=['ID_CommunityIdentity']), votes_and_postings, on='ID_CommunityIdentity', how='left')
+users = pd.merge(pd.DataFrame(unique_user_ids_following, columns=['ID_CommunityIdentity']), votes_and_postings,
+                 on='ID_CommunityIdentity', how='left')
 
 users['UserCreatedAt'] = pd.to_datetime(users['UserCreatedAt'])
-users['UserCreatedAt'] = users['UserCreatedAt'].dt.date
+reference_date = datetime.now()
+users['account_age'] = round((reference_date - users['UserCreatedAt']).dt.days / 365)  # convert to years
+users = users.drop(columns=["UserCreatedAt"])
 print(f"Created User-Dataset of length {len(users)}")
 print(users.isnull().sum() / len(users))
 
