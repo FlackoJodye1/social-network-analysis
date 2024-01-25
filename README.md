@@ -6,7 +6,7 @@ Project for Social-Network-Analysis
 # Data Files
 
 The data files contain data from derStandard.at and can be found on TUWEL.
-Before running the code, dowload all data available at the following [link](https://drive.google.com/drive/folders/1wR5MG_6e9N2zGjDVUyxawp_wJ1NSilE-) and place them into the folder data/raw, that you can find [here](/data/)
+Before running the code, dowload all data available at the following [link](https://drive.google.com/drive/folders/1wR5MG_6e9N2zGjDVUyxawp_wJ1NSilE-) and place them into the folder data, that you can find [here](/data/)
 
 ## Setup
 
